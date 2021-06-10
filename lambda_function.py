@@ -21,7 +21,7 @@ def lambda_handler(event, context):
         if fileType == "claims":
             print(fileType)
             read_file = pd.read_excel(data_file_url, engine='openpyxl', sheet_name=1)
-            read_file.rename(columns={'Claim ID': 'Claim_ID'},inplace=True)
+            read_file.rename(columns={'Claim ID': 'Claim_ID'} , inplace=True)
         else:
             print(fileType)
             read_file = pd.read_excel(data_file_url, header=1, engine='openpyxl')

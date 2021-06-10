@@ -1,33 +1,26 @@
 import pytest
-from pandas.core.series import Series
 
 
-class TestSeriesValidate(object):
+@pytest.mark.parametrize(
+    "func",
+    [
+        "reset_index",
+        "_set_name",
+        "sort_values",
+        "sort_index",
+        "rename",
+        "dropna",
+        "drop_duplicates",
+    ],
+)
+@pytest.mark.parametrize("inplace", [1, "True", [1, 2, 3], 5.0])
+def test_validate_bool_args(string_series, func, inplace):
     """Tests for error handling related to data types of method arguments."""
-    s = Series([1, 2, 3, 4, 5])
+    msg = 'For argument "inplace" expected type bool'
+    kwargs = dict(inplace=inplace)
 
-    def test_validate_bool_args(self):
-        # Tests for error handling related to boolean arguments.
-        invalid_values = [1, "True", [1, 2, 3], 5.0]
+    if func == "_set_name":
+        kwargs["name"] = "hello"
 
-        for value in invalid_values:
-            with pytest.raises(ValueError):
-                self.s.reset_index(inplace=value)
-
-            with pytest.raises(ValueError):
-                self.s._set_name(name='hello', inplace=value)
-
-            with pytest.raises(ValueError):
-                self.s.sort_values(inplace=value)
-
-            with pytest.raises(ValueError):
-                self.s.sort_index(inplace=value)
-
-            with pytest.raises(ValueError):
-                self.s.sort_index(inplace=value)
-
-            with pytest.raises(ValueError):
-                self.s.rename(inplace=value)
-
-            with pytest.raises(ValueError):
-                self.s.dropna(inplace=value)
+    with pytest.raises(ValueError, match=msg):
+        getattr(string_series, func)(**kwargs)

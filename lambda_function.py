@@ -21,11 +21,14 @@ def lambda_handler(event, context):
         if fileType == "claims":
             print(fileType)
             read_file = pd.read_excel(data_file_url, engine='openpyxl', sheet_name=1)
-            read_file.rename(columns={'Claim ID': 'Claim_ID'} , inplace=True)
+            read_file.dropna(how="all", inplace=True)
+            read_file.rename(columns={'Claim ID': 'Claim_ID'}, inplace=True)
+            read_file['IMO'] = read_file['IMO'].astype(int)
         else:
             print(fileType)
             read_file = pd.read_excel(data_file_url, header=1, engine='openpyxl')
+            read_file.dropna(how="all", inplace=True)
         read_file.to_csv("s3://" + bucket_name + "/" + s3_path + file_name + csv, index=None, encoding="UTF-8")
         return file_name+csv
     except:
-        print("Oops!", sys.exc_info()[0], "occurred.")
+        print("Oops!", sys.exc_info(), "occurred.")
